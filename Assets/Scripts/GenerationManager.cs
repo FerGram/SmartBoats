@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -17,6 +17,13 @@ public class GenerationManager : MonoBehaviour
 
     [Space(10)]
     [Header("Parenting and Mutation")]
+    [SerializeField] 
+    private bool sexualReproduction;
+    [SerializeField] [Range(0, 100)]
+    private int crossoverChance;
+    [SerializeField] [Range(0, 100)]
+    private int extraMutationChance;
+    [Space(10)]
     [SerializeField]
     private float mutationFactor;
     [SerializeField] 
@@ -56,6 +63,9 @@ public class GenerationManager : MonoBehaviour
     private List<PirateLogic> _activePirates;
     private BoatLogic[] _boatParents;
     private PirateLogic[] _pirateParents;
+
+    private StreamWriter writer;
+
 
     private void Awake()
     {
@@ -128,15 +138,29 @@ public class GenerationManager : MonoBehaviour
                 _activePirates.Add(pirate);
                 if (pirateParents != null)
                 {
-                    PirateLogic pirateParent = pirateParents[Random.Range(0, pirateParents.Length)];
-                    pirate.Birth(pirateParent.GetData());
+                    if (sexualReproduction){
+                        PirateLogic pirateParent1 = pirateParents[Random.Range(0, pirateParents.Length)];
+                        PirateLogic pirateParent2 = pirateParents[Random.Range(0, pirateParents.Length)];;
+                        while (pirateParent1 != pirateParent2){
+                            pirateParent2 = pirateParents[Random.Range(0, pirateParents.Length)];
+                        }
+
+                        pirate.Birth(pirateParent1.GetData(), pirateParent2.GetData(), crossoverChance);
+                    }
+                    else{
+                        PirateLogic pirateParent = pirateParents[Random.Range(0, pirateParents.Length)];
+                        pirate.Birth(pirateParent.GetData());
+                    }
                 }
 
-                pirate.Mutate(mutationFactor, mutationChance);
+                //Do an extra mutation if sexual reproduction
+                if (sexualReproduction) pirate.Mutate(mutationFactor, extraMutationChance); 
+                else pirate.Mutate(mutationFactor, mutationChance);
                 pirate.AwakeUp();
             }
         }
     }
+
 
      /// <summary>
      /// Generates the list of boats using the parents list. The parent list can be null and, if so, it will be ignored.
@@ -156,11 +180,22 @@ public class GenerationManager : MonoBehaviour
                 _activeBoats.Add(boat);
                 if (boatParents != null)
                 {
-                    BoatLogic boatParent = boatParents[Random.Range(0, boatParents.Length)];
-                    boat.Birth(boatParent.GetData());
-                }
+                    if (sexualReproduction){
+                        BoatLogic boatParent1 = boatParents[Random.Range(0, boatParents.Length)];
+                        BoatLogic boatParent2 = boatParents[Random.Range(0, boatParents.Length)];;
+                        while (boatParent1 != boatParent2){
+                            boatParent1 = boatParents[Random.Range(0, boatParents.Length)];
+                        }
 
-                boat.Mutate(mutationFactor, mutationChance);
+                        boat.Birth(boatParent1.GetData(), boatParent2.GetData(), crossoverChance);
+                    }
+                    else {
+                        BoatLogic boatParent = boatParents[Random.Range(0, boatParents.Length)];
+                        boat.Birth(boatParent.GetData());
+                    }
+                }
+                if (sexualReproduction) boat.Mutate(mutationFactor, extraMutationChance); 
+                else boat.Mutate(mutationFactor, mutationChance);
                 boat.AwakeUp();
             }
         }
@@ -178,7 +213,7 @@ public class GenerationManager : MonoBehaviour
 
         GenerateBoxes();
         
-        //Fetch parents
+        //Remove all null elements and sort the active boats (O(n log n))
         _activeBoats.RemoveAll(item => item == null);
         _activeBoats.Sort();
         if (_activeBoats.Count == 0)
@@ -186,11 +221,14 @@ public class GenerationManager : MonoBehaviour
             GenerateBoats(_boatParents);
         }
         _boatParents = new BoatLogic[boatParentSize];
-        for (int i = 0; i < boatParentSize; i++)
+
+        //This generation will be the new parents
+        for (int i = 0; i < boatParentSize; i++) 
         {
             _boatParents[i] = _activeBoats[i];
         }
 
+        //And save the best boat
         BoatLogic lastBoatWinner = _activeBoats[0];
         lastBoatWinner.name += "Gen-" + generationCount; 
         lastBoatWinnerData = lastBoatWinner.GetData();
@@ -211,7 +249,8 @@ public class GenerationManager : MonoBehaviour
         
         //Winners:
         Debug.Log("Last winner boat had: " + lastBoatWinner.GetPoints() + " points!" + " Last winner pirate had: " + lastPirateWinner.GetPoints() + " points!");
-        
+        OutputText(lastBoatWinner, lastPirateWinner);
+
         GenerateObjects(_boatParents, _pirateParents);
     }
 
@@ -249,4 +288,22 @@ public class GenerationManager : MonoBehaviour
         _activeBoats.ForEach(boat => boat.Sleep());
         _activePirates.ForEach(pirate => pirate.Sleep());
     }
+
+    private void OutputText(AgentLogic lastBoatWinner, AgentLogic lastPirateWinner){
+
+        writer = File.AppendText(Directory.GetCurrentDirectory() + @"\results.txt");
+
+        float boatPoints = lastBoatWinner.GetPoints();
+        float piratePoints = lastPirateWinner.GetPoints();
+
+        writer.WriteLine($"[{boatPoints}-{piratePoints}]");
+        writer.Close();
+    }
+    // private void OutputText(string text){
+
+    //     writer = File.AppendText(Directory.GetCurrentDirectory() + @"\results");
+
+    //     writer.WriteLine($"[{text}]");
+    //     writer.Close();
+    // }
 }

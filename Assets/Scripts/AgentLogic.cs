@@ -53,8 +53,10 @@ public struct AgentData
     public float boatDistanceFactor;
     public float enemyWeight;
     public float enemyDistanceFactor;
+    public float explosiveWeight;
+    public float explosiveDistanceFactor;
 
-    public AgentData(int steps, int rayRadius, float sight, float movingSpeed, Vector2 randomDirectionValue, float boxWeight, float distanceFactor, float boatWeight, float boatDistanceFactor, float enemyWeight, float enemyDistanceFactor)
+    public AgentData(int steps, int rayRadius, float sight, float movingSpeed, Vector2 randomDirectionValue, float boxWeight, float distanceFactor, float boatWeight, float boatDistanceFactor, float enemyWeight, float enemyDistanceFactor, float explosiveWeight, float explosiveDistanceFactor)
     {
         this.steps = steps;
         this.rayRadius = rayRadius;
@@ -67,6 +69,8 @@ public struct AgentData
         this.boatDistanceFactor = boatDistanceFactor;
         this.enemyWeight = enemyWeight;
         this.enemyDistanceFactor = enemyDistanceFactor;
+        this.explosiveWeight = explosiveWeight;
+        this.explosiveDistanceFactor = explosiveDistanceFactor;
     }
 }
 
@@ -112,6 +116,10 @@ public class AgentLogic : MonoBehaviour, IComparable
     private float enemyWeight;
     [SerializeField]
     private float enemyDistanceFactor;
+    [SerializeField]
+    private float explosiveWeight;
+    [SerializeField]
+    private float explosiveDistanceFactor;
 
     [Space(10)]
     [Header("Debug & Help")] 
@@ -166,6 +174,44 @@ public class AgentLogic : MonoBehaviour, IComparable
         boatDistanceFactor = parent.boatDistanceFactor;
         enemyWeight = parent.enemyWeight;
         enemyDistanceFactor = parent.enemyDistanceFactor;
+        explosiveWeight = parent.explosiveWeight;
+        explosiveDistanceFactor = parent.explosiveDistanceFactor;
+    }
+
+    /// <summary>
+    /// Copies the genes / weights from the two parents. Crossover is the percentage of 
+    /// mixing parent2 into the offspring
+    /// </summary>
+    /// <param name="parent"></param>
+    public void Birth(AgentData parent1, AgentData parent2, int crossoverChance)
+    {
+        //Given the crossoverChance 40, variables have a 40% to inherit parent2's values
+        if (Random.Range(0, 100) < crossoverChance) steps = parent1.steps;
+        else steps = parent2.steps;
+        if (Random.Range(0, 100) < crossoverChance) rayRadius = parent1.rayRadius;
+        else rayRadius = parent2.rayRadius;
+        if (Random.Range(0, 100) < crossoverChance) sight = parent1.sight;
+        else sight = parent2.sight;
+        if (Random.Range(0, 100) < crossoverChance) movingSpeed = parent1.movingSpeed;
+        else movingSpeed = parent2.movingSpeed;
+        if (Random.Range(0, 100) < crossoverChance) randomDirectionValue = parent1.randomDirectionValue;
+        else randomDirectionValue = parent2.randomDirectionValue;
+        if (Random.Range(0, 100) < crossoverChance) boxWeight = parent1.boxWeight;
+        else boxWeight = parent2.boxWeight;
+        if (Random.Range(0, 100) < crossoverChance) distanceFactor = parent1.distanceFactor;
+        else distanceFactor = parent2.distanceFactor;
+        if (Random.Range(0, 100) < crossoverChance) boatWeight = parent1.boatWeight;
+        else boatWeight = parent2.boatWeight;
+        if (Random.Range(0, 100) < crossoverChance) boatDistanceFactor = parent1.boatDistanceFactor;
+        else boatDistanceFactor = parent2.boatDistanceFactor;
+        if (Random.Range(0, 100) < crossoverChance) enemyWeight = parent1.enemyWeight;
+        else enemyWeight = parent2.enemyWeight;
+        if (Random.Range(0, 100) < crossoverChance) enemyDistanceFactor = parent1.enemyDistanceFactor;
+        else enemyDistanceFactor = parent2.enemyDistanceFactor;
+        if (Random.Range(0, 100) < crossoverChance) explosiveWeight = parent1.explosiveWeight;
+        else explosiveWeight = parent2.explosiveWeight;
+        if (Random.Range(0, 100) < crossoverChance) explosiveDistanceFactor = parent1.explosiveDistanceFactor;
+        else explosiveDistanceFactor = parent2.explosiveDistanceFactor;
     }
 
     /// <summary>
@@ -239,6 +285,14 @@ public class AgentLogic : MonoBehaviour, IComparable
         if (Random.Range(0.0f, 100.0f) <= mutationChance)
         {
             enemyDistanceFactor += Random.Range(-mutationFactor, +mutationFactor);
+        }
+        if (Random.Range(0.0f, 100.0f) <= mutationChance)
+        {
+            explosiveWeight += Random.Range(-mutationFactor, +mutationFactor);
+        }
+        if (Random.Range(0.0f, 100.0f) <= mutationChance)
+        {
+            explosiveDistanceFactor += Random.Range(-mutationFactor, +mutationFactor);
         }
     }
 
@@ -341,6 +395,9 @@ public class AgentLogic : MonoBehaviour, IComparable
                 case "Enemy":
                     utility = distanceIndex * enemyDistanceFactor + enemyWeight;
                     break;
+                case "Explosive":
+                    utility = distanceIndex * explosiveDistanceFactor + explosiveWeight;
+                    break;
             }
         }
         
@@ -398,6 +455,6 @@ public class AgentLogic : MonoBehaviour, IComparable
     /// <returns></returns>
     public AgentData GetData()
     {
-        return new AgentData(steps, rayRadius, sight, movingSpeed, randomDirectionValue, boxWeight, distanceFactor, boatWeight, boatDistanceFactor, enemyWeight,  enemyDistanceFactor);
+        return new AgentData(steps, rayRadius, sight, movingSpeed, randomDirectionValue, boxWeight, distanceFactor, boatWeight, boatDistanceFactor, enemyWeight, enemyDistanceFactor, explosiveWeight, explosiveDistanceFactor);
     }
 }
