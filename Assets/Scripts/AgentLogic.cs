@@ -49,6 +49,8 @@ public struct AgentData
     public Vector2 randomDirectionValue;
     public float boxWeight;
     public float distanceFactor;
+    public float bigBoxWeight;
+    public float bigDistanceFactor;
     public float boatWeight;
     public float boatDistanceFactor;
     public float enemyWeight;
@@ -56,7 +58,7 @@ public struct AgentData
     public float explosiveWeight;
     public float explosiveDistanceFactor;
 
-    public AgentData(int steps, int rayRadius, float sight, float movingSpeed, Vector2 randomDirectionValue, float boxWeight, float distanceFactor, float boatWeight, float boatDistanceFactor, float enemyWeight, float enemyDistanceFactor, float explosiveWeight, float explosiveDistanceFactor)
+    public AgentData(int steps, int rayRadius, float sight, float movingSpeed, Vector2 randomDirectionValue, float boxWeight, float distanceFactor, float bigBoxWeight, float bigDistanceFactor, float boatWeight, float boatDistanceFactor, float enemyWeight, float enemyDistanceFactor, float explosiveWeight, float explosiveDistanceFactor)
     {
         this.steps = steps;
         this.rayRadius = rayRadius;
@@ -65,6 +67,8 @@ public struct AgentData
         this.randomDirectionValue = randomDirectionValue;
         this.boxWeight = boxWeight;
         this.distanceFactor = distanceFactor;
+        this.bigBoxWeight = bigBoxWeight;
+        this.bigDistanceFactor = bigDistanceFactor;
         this.boatWeight = boatWeight;
         this.boatDistanceFactor = boatDistanceFactor;
         this.enemyWeight = enemyWeight;
@@ -108,6 +112,10 @@ public class AgentLogic : MonoBehaviour, IComparable
     private float boxWeight;
     [SerializeField]
     private float distanceFactor;
+    [SerializeField]
+    private float bigBoxWeight;
+    [SerializeField]
+    private float bigDistanceFactor;
     [SerializeField]
     private float boatWeight;
     [SerializeField]
@@ -170,6 +178,8 @@ public class AgentLogic : MonoBehaviour, IComparable
         randomDirectionValue = parent.randomDirectionValue;
         boxWeight = parent.boxWeight;
         distanceFactor = parent.distanceFactor;
+        bigBoxWeight = parent.bigBoxWeight;
+        bigDistanceFactor = parent.bigDistanceFactor;
         boatWeight = parent.boatWeight;
         boatDistanceFactor = parent.boatDistanceFactor;
         enemyWeight = parent.enemyWeight;
@@ -200,6 +210,10 @@ public class AgentLogic : MonoBehaviour, IComparable
         else boxWeight = parent2.boxWeight;
         if (Random.Range(0, 100) < crossoverChance) distanceFactor = parent1.distanceFactor;
         else distanceFactor = parent2.distanceFactor;
+        if (Random.Range(0, 100) < crossoverChance) bigBoxWeight = parent1.bigBoxWeight;
+        else bigBoxWeight = parent2.bigBoxWeight;
+        if (Random.Range(0, 100) < crossoverChance) bigDistanceFactor = parent1.bigDistanceFactor;
+        else bigDistanceFactor = parent2.bigDistanceFactor;
         if (Random.Range(0, 100) < crossoverChance) boatWeight = parent1.boatWeight;
         else boatWeight = parent2.boatWeight;
         if (Random.Range(0, 100) < crossoverChance) boatDistanceFactor = parent1.boatDistanceFactor;
@@ -269,6 +283,14 @@ public class AgentLogic : MonoBehaviour, IComparable
         if (Random.Range(0.0f, 100.0f) <= mutationChance)
         {
             distanceFactor += Random.Range(-mutationFactor, +mutationFactor);
+        }
+        if (Random.Range(0.0f, 100.0f) <= mutationChance)
+        {
+            bigBoxWeight += Random.Range(-mutationFactor, +mutationFactor);
+        }
+        if (Random.Range(0.0f, 100.0f) <= mutationChance)
+        {
+            bigDistanceFactor += Random.Range(-mutationFactor, +mutationFactor);
         }
         if (Random.Range(0.0f, 100.0f) <= mutationChance)
         {
@@ -389,6 +411,9 @@ public class AgentLogic : MonoBehaviour, IComparable
                 case "Box":
                     utility = distanceIndex * distanceFactor + boxWeight;
                     break;
+                case "BigBox":
+                    utility = distanceIndex * bigDistanceFactor + bigBoxWeight;
+                    break;
                 case "Boat":
                     utility = distanceIndex * boatDistanceFactor + boatWeight;
                     break;
@@ -455,6 +480,6 @@ public class AgentLogic : MonoBehaviour, IComparable
     /// <returns></returns>
     public AgentData GetData()
     {
-        return new AgentData(steps, rayRadius, sight, movingSpeed, randomDirectionValue, boxWeight, distanceFactor, boatWeight, boatDistanceFactor, enemyWeight, enemyDistanceFactor, explosiveWeight, explosiveDistanceFactor);
+        return new AgentData(steps, rayRadius, sight, movingSpeed, randomDirectionValue, boxWeight, distanceFactor, bigBoxWeight, bigDistanceFactor, boatWeight, boatDistanceFactor, enemyWeight, enemyDistanceFactor, explosiveWeight, explosiveDistanceFactor);
     }
 }

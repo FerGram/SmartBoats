@@ -82,7 +82,9 @@ MonoBehaviour:
   movingSpeed: 5
   randomDirectionValue: {x: -1, y: 1}
   boxWeight: 1.5
-  distanceFactor: 1.5
+  distanceFactor: 1
+  bigBoxWeight: 1.5
+  bigDistanceFactor: 2
   boatWeight: 0
   boatDistanceFactor: 0
   enemyWeight: -3

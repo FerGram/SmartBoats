@@ -6,7 +6,8 @@ public class PirateLogic : AgentLogic
 {
     #region Static Variables
     private static float _boxPoints = 0.1f;
-    private static float _boatPoints = 5.0f;
+    private static float _bigBoxPoints = 0.5f;
+    private static float _boatPoints = 7.0f;
     #endregion
     
     private void OnTriggerEnter(Collider other)
@@ -14,6 +15,11 @@ public class PirateLogic : AgentLogic
         if(other.gameObject.tag.Equals("Box"))
         {
             points += _boxPoints;
+            Destroy(other.gameObject);
+        }
+        if(other.gameObject.tag.Equals("BigBox"))
+        {
+            points += _bigBoxPoints;
             Destroy(other.gameObject);
         }
     }

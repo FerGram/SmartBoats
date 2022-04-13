@@ -6,6 +6,7 @@ public class BoatLogic : AgentLogic
 {
     #region Static Variables
     private static float _boxPoints = 2.0f;
+    private static float _bigBoxPoints = 5.0f;
     private static float _piratePoints = -100.0f;
     #endregion
     
@@ -14,6 +15,11 @@ public class BoatLogic : AgentLogic
         if(other.gameObject.tag.Equals("Box"))
         {
             points += _boxPoints;
+            Destroy(other.gameObject);
+        }
+        if(other.gameObject.tag.Equals("BigBox"))
+        {
+            points += _bigBoxPoints;
             Destroy(other.gameObject);
         }
     }
