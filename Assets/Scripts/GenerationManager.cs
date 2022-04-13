@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -70,6 +72,7 @@ public class GenerationManager : MonoBehaviour
     private void Awake()
     {
         Random.InitState(6);
+        ResetOutputs();
     }
 
     private void Start()
@@ -249,7 +252,8 @@ public class GenerationManager : MonoBehaviour
         
         //Winners:
         Debug.Log("Last winner boat had: " + lastBoatWinner.GetPoints() + " points!" + " Last winner pirate had: " + lastPirateWinner.GetPoints() + " points!");
-        OutputText(lastBoatWinner, lastPirateWinner);
+        OutputText(lastBoatWinner);
+        OutputText(lastPirateWinner);
 
         GenerateObjects(_boatParents, _pirateParents);
     }
@@ -289,21 +293,35 @@ public class GenerationManager : MonoBehaviour
         _activePirates.ForEach(pirate => pirate.Sleep());
     }
 
-    private void OutputText(AgentLogic lastBoatWinner, AgentLogic lastPirateWinner){
+    private void OutputText(AgentLogic agentWinner){
 
-        writer = File.AppendText(Directory.GetCurrentDirectory() + @"\results.txt");
+        if (agentWinner is BoatLogic) writer = File.AppendText(Directory.GetCurrentDirectory() + @"\boats.csv");
+        else writer = File.AppendText(Directory.GetCurrentDirectory() + @"\pirates.csv");
 
-        float boatPoints = lastBoatWinner.GetPoints();
-        float piratePoints = lastPirateWinner.GetPoints();
+        float points = agentWinner.GetPoints();
 
-        writer.WriteLine($"[{boatPoints}-{piratePoints}]");
+        //For some culture reasons, writeLine writes floats with coma instead of a dot
+        NumberFormatInfo numberFormat = new NumberFormatInfo
+        {
+            NumberDecimalSeparator=".",
+        };
+        writer.WriteLine(points.ToString("0.00", numberFormat));
         writer.Close();
     }
-    // private void OutputText(string text){
 
-    //     writer = File.AppendText(Directory.GetCurrentDirectory() + @"\results");
+    private void ResetOutputs(){
 
-    //     writer.WriteLine($"[{text}]");
-    //     writer.Close();
-    // }
+        if (File.Exists((Directory.GetCurrentDirectory() + @"\boats.csv")))
+            File.Delete((Directory.GetCurrentDirectory() + @"\boats.csv"));
+        if (File.Exists((Directory.GetCurrentDirectory() + @"\pirates.csv")))
+            File.Delete((Directory.GetCurrentDirectory() + @"\pirates.csv"));
+        
+        writer = File.AppendText(Directory.GetCurrentDirectory() + @"\boats.csv");
+        writer.WriteLine("Points");
+        writer.Close();
+
+        writer = File.AppendText(Directory.GetCurrentDirectory() + @"\pirates.csv");
+        writer.WriteLine("Points");
+        writer.Close();
+    }
 }
