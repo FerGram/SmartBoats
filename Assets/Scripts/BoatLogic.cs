@@ -15,11 +15,13 @@ public class BoatLogic : AgentLogic
         if(other.gameObject.tag.Equals("Box"))
         {
             points += _boxPoints;
+            objectivesCaptured++;
             Destroy(other.gameObject);
         }
         if(other.gameObject.tag.Equals("BigBox"))
         {
             points += _bigBoxPoints;
+            objectivesCaptured++;
             Destroy(other.gameObject);
         }
     }

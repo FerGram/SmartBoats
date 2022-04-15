@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Explosive
   - BigBox
+  - Border
   layers:
   - Default
   - TransparentFX

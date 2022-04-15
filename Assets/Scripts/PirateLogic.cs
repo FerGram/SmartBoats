@@ -5,9 +5,9 @@ using Random = UnityEngine.Random;
 public class PirateLogic : AgentLogic
 {
     #region Static Variables
-    private static float _boxPoints = 0.1f;
-    private static float _bigBoxPoints = 0.5f;
-    private static float _boatPoints = 7.0f;
+    private static float _boxPoints = 1.5f;
+    private static float _bigBoxPoints = 3.5f;
+    private static float _boatPoints = 8f;
     #endregion
     
     private void OnTriggerEnter(Collider other)
@@ -15,11 +15,13 @@ public class PirateLogic : AgentLogic
         if(other.gameObject.tag.Equals("Box"))
         {
             points += _boxPoints;
+            objectivesCaptured++;
             Destroy(other.gameObject);
         }
         if(other.gameObject.tag.Equals("BigBox"))
         {
             points += _bigBoxPoints;
+            objectivesCaptured++;
             Destroy(other.gameObject);
         }
     }
@@ -29,6 +31,7 @@ public class PirateLogic : AgentLogic
         if(other.gameObject.tag.Equals("Boat"))
         {
             points += _boatPoints;
+            objectivesCaptured++;
             Destroy(other.gameObject);
         }
     }

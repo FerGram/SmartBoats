@@ -91,6 +91,7 @@ public class AgentLogic : MonoBehaviour, IComparable
     
     [SerializeField]
     protected float points;
+    protected int objectivesCaptured;
 
     private bool _isAwake;
 
@@ -423,6 +424,9 @@ public class AgentLogic : MonoBehaviour, IComparable
                 case "Explosive":
                     utility = distanceIndex * explosiveDistanceFactor + explosiveWeight;
                     break;
+                case "Border":
+                    utility = -100f;
+                    break;
             }
         }
         
@@ -453,6 +457,13 @@ public class AgentLogic : MonoBehaviour, IComparable
     {
         return points;
     }
+
+    public float GetFitnessFunction(){
+
+        //Given two agents with the same points, this function prioritizes 
+        //the agent with more objectives captured
+        return GetPoints() + GetPoints() * objectivesCaptured;
+    }
     
     /// <summary>
     /// Compares the points of two agents. When used on Sort function will make the highest points to be on top.
@@ -467,6 +478,7 @@ public class AgentLogic : MonoBehaviour, IComparable
         if (otherAgent != null)
         {
             return otherAgent.GetPoints().CompareTo(GetPoints());
+            // return otherAgent.GetFitnessFunction().CompareTo(GetFitnessFunction());
         } 
         else
         {

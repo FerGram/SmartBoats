@@ -26,7 +26,7 @@ import pandas as pd
 
 ### UNCOMMENT to Directly plot the whole data ###
 
-data = pd.read_csv("C:\\Users\\fergr\\Documents\\Universidad\\3er Año\\_SAXION\\T1_Advanced Tools\\SmartBoats\\boats.csv")
+data = pd.read_csv("C:\\Users\\fergr\\Documents\\Universidad\\3er Año\\_SAXION\\T1_Advanced Tools\\SmartBoats\\piratesParentsFitness.csv")
 x = []
 y = []
 
