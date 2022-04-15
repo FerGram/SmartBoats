@@ -477,8 +477,8 @@ public class AgentLogic : MonoBehaviour, IComparable
         AgentLogic otherAgent = obj as AgentLogic;
         if (otherAgent != null)
         {
-            return otherAgent.GetPoints().CompareTo(GetPoints());
-            // return otherAgent.GetFitnessFunction().CompareTo(GetFitnessFunction());
+            // return otherAgent.GetPoints().CompareTo(GetPoints());
+            return otherAgent.GetFitnessFunction().CompareTo(GetFitnessFunction());
         } 
         else
         {
