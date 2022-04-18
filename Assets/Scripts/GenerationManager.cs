@@ -141,7 +141,7 @@ public class GenerationManager : MonoBehaviour
                 _activePirates.Add(pirate);
                 if (pirateParents != null)
                 {
-                    if (sexualReproduction){
+                    if (sexualReproduction && pirateParents.Length > 1){
                         PirateLogic pirateParent1 = pirateParents[Random.Range(0, pirateParents.Length)];
                         PirateLogic pirateParent2 = pirateParents[Random.Range(0, pirateParents.Length)];;
                         while (pirateParent1 != pirateParent2){
@@ -183,7 +183,7 @@ public class GenerationManager : MonoBehaviour
                 _activeBoats.Add(boat);
                 if (boatParents != null)
                 {
-                    if (sexualReproduction){
+                    if (sexualReproduction && boatParents.Length > 1){
                         BoatLogic boatParent1 = boatParents[Random.Range(0, boatParents.Length)];
                         BoatLogic boatParent2 = boatParents[Random.Range(0, boatParents.Length)];;
                         while (boatParent1 != boatParent2){
